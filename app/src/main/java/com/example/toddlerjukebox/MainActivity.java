@@ -47,8 +47,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void playSong(String spotifyUri) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(android.net.Uri.parse(spotifyUri));
-        startActivity(intent);
+        SpotifyClient.connect(this,
+            () -> SpotifyClient.play(spotifyUri),
+            () -> {
+                // Optional: show error to user
+            });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyClient.disconnect();
     }
 }

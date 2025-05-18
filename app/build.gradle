@@ -29,9 +29,10 @@ android {
 }
 
 dependencies {
-
+    implementation project(":spotify-app-remote")
     implementation libs.appcompat
     implementation libs.material
+    implementation libs.dotenv.java
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
