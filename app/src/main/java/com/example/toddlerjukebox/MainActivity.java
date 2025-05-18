@@ -19,9 +19,9 @@ public class MainActivity extends AppCompatActivity {
     private SpotifyClient client;
 
     private final List<SongItem> songItems = List.of(
-            new SongItem(Color.valueOf(Color.RED), "spotify:track:1234567890abcdef"), // Red
-            new SongItem(Color.valueOf(Color.GREEN), "spotify:track:abcdef1234567890"), // Green
-            new SongItem(Color.valueOf(Color.BLUE), "spotify:track:fedcba0987654321")  // Blue
+            new SongItem(Color.valueOf(Color.RED), "spotify:track:6bjmxa25hThyR7MSqWMPPm"), // Big Big God
+            new SongItem(Color.valueOf(Color.GREEN), "spotify:track:601M9QaiJ2Kmx0h0qaMwXx"), // Green
+            new SongItem(Color.valueOf(Color.BLUE), "spotify:track:7kM7JiA5Ak58dj6V52onnc")  // Blue
     );
 
     @Override
