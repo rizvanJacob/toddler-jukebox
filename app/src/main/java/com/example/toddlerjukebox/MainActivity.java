@@ -1,27 +1,36 @@
 package com.example.toddlerjukebox;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.graphics.drawable.GradientDrawable;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private Config config;
+    private SpotifyClient client;
 
     private final List<SongItem> songItems = List.of(
-        new SongItem(Color.valueOf(Color.RED), "spotify:track:1234567890abcdef"), // Red
-        new SongItem(Color.valueOf(Color.GREEN), "spotify:track:abcdef1234567890"), // Green
-        new SongItem(Color.valueOf(Color.BLUE), "spotify:track:fedcba0987654321")  // Blue
+            new SongItem(Color.valueOf(Color.RED), "spotify:track:1234567890abcdef"), // Red
+            new SongItem(Color.valueOf(Color.GREEN), "spotify:track:abcdef1234567890"), // Green
+            new SongItem(Color.valueOf(Color.BLUE), "spotify:track:fedcba0987654321")  // Blue
     );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        config = new Config();
+        client = new SpotifyClient(
+                config.clientId,
+                config.clientSecret,
+                config.redirectUri
+        );
         setContentView(R.layout.activity_main);
 
         LinearLayout container = findViewById(R.id.buttonContainer);
@@ -29,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         for (SongItem item : songItems) {
             Button button = new Button(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                300
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    300
             );
             params.setMargins(0, 24, 0, 24);
             button.setLayoutParams(params);
@@ -47,16 +56,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void playSong(String spotifyUri) {
-        SpotifyClient.connect(this,
-            () -> SpotifyClient.play(spotifyUri),
-            () -> {
-                // Optional: show error to user
-            });
+        if (client == null) {
+            Log.e("Main", "Attempted to play song but client is null!");
+            return;
+        }
+        client.connect(this,
+                () -> client.play(spotifyUri),
+                () -> {
+                    // Optional: show error to user
+                });
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        SpotifyClient.disconnect();
+        if (client != null) {
+            client.disconnect();
+        }
     }
 }
