@@ -7,12 +7,17 @@ import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class SpotifyClient {
     private final String clientId, clientSecret, redirectUri;
     private SpotifyAppRemote spotifyAppRemote;
+
+    public SpotifyClient(String clientId, String clientSecret, String redirectUri) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.redirectUri = redirectUri;
+
+        Log.d("SpotifyClient", String.format("Instantiated Client %s; redirects to %s", clientId, redirectUri));
+    }
 
     public void connect(Context context, Runnable onConnected, Runnable onFailure) {
         if (spotifyAppRemote != null && spotifyAppRemote.isConnected()) {

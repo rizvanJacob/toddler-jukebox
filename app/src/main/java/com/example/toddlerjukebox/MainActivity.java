@@ -1,6 +1,8 @@
 package com.example.toddlerjukebox;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -72,6 +74,22 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         if (client != null) {
             client.disconnect();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // So getIntent() returns the new one
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Uri data = getIntent().getData();
+        if (data != null) {
+            Log.d("MainActivity", "Redirected with URI: " + data.toString());
+            // Optional: handle URI here if you want to extract tokens or validate
         }
     }
 }
