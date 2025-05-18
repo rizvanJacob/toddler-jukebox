@@ -1,0 +1,54 @@
+package com.example.toddlerjukebox;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.graphics.drawable.GradientDrawable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private final List<SongItem> songItems = List.of(
+        new SongItem(Color.valueOf(Color.RED), "spotify:track:1234567890abcdef"), // Red
+        new SongItem(Color.valueOf(Color.GREEN), "spotify:track:abcdef1234567890"), // Green
+        new SongItem(Color.valueOf(Color.BLUE), "spotify:track:fedcba0987654321")  // Blue
+    );
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        LinearLayout container = findViewById(R.id.buttonContainer);
+
+        for (SongItem item : songItems) {
+            Button button = new Button(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                300
+            );
+            params.setMargins(0, 24, 0, 24);
+            button.setLayoutParams(params);
+
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setColor(item.color().toArgb());
+            drawable.setCornerRadius(100f); // rounded corners
+            button.setBackground(drawable);
+
+            button.setText("");
+            button.setOnClickListener(v -> playSong(item.spotifyUrl()));
+            container.addView(button);
+        }
+    }
+
+    private void playSong(String spotifyUri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(android.net.Uri.parse(spotifyUri));
+        startActivity(intent);
+    }
+}
