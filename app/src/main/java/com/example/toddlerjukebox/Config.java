@@ -20,7 +20,7 @@ public class Config {
         clientSecret = BuildConfig.SPOTIFY_CLIENT_SECRET;
         redirectUri = BuildConfig.SPOTIFY_REDIRECT_URI;
 
-        songs = loadSongs();
+        songs = List.of();
     }
 
     private List<SongItem> loadSongs(){
@@ -29,7 +29,7 @@ public class Config {
         songs.add(new SongItem("big_god.png", "6bjmxa25hThyR7MSqWMPPm"));
         songs.add(new SongItem("fish.png", "601M9QaiJ2Kmx0h0qaMwXx"));
         songs.add(new SongItem("bus.png", "6ZvjMcDpXI72hK4AnNrS6P"));
-        
+
         return List.copyOf(songs);
     }
 

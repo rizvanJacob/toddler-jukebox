@@ -24,11 +24,7 @@ public class MainActivity extends AppCompatActivity {
                 config.redirectUri
         );
 
-        nfcReader = new NfcReader(this, tagId -> {
-            Log.d(TAG, "NFC tag detected: " + tagId);
-            // TODO: Match tag ID to song and play
-        });
-
+        nfcReader = new NfcReader(this, client);
         uiLocker = new UiLocker(this);
 
         onResume();
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (client != null) {
-            client.stop();
+            client.pause();
             client.disconnect();
         }
         uiLocker.unlock();
@@ -74,6 +70,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent); // So getIntent() returns the new one
-        nfcReader.handleIntent(intent);
     }
 }

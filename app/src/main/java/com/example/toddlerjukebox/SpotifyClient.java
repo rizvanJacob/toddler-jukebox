@@ -60,24 +60,37 @@ public class SpotifyClient {
                 });
     }
 
-    public void play(String spotifyUri) {
-        if (!isReady()) {
-            Log.e(TAG, "Is not connected!");
-            return;
-        }
-        spotifyAppRemote.getPlayerApi().play(spotifyUri);
+    private String parseSpotifyUrl(String trackId) {
+        return String.format("spotify:track:%s", trackId);
     }
 
-    public void stop(){
+    public void play(String trackId) {
         if (!isReady()) {
-            Log.e(TAG, "Is not connected!");
+            return;
+        }
+        spotifyAppRemote.getPlayerApi().play(parseSpotifyUrl(trackId));
+    }
+
+    public void resume(){
+        if (!isReady()) {
+            return;
+        }
+        spotifyAppRemote.getPlayerApi().resume();
+    }
+
+    public void pause(){
+        if (!isReady()) {
             return;
         }
         spotifyAppRemote.getPlayerApi().pause();
     }
 
     private boolean isReady(){
-        return spotifyAppRemote != null && spotifyAppRemote.isConnected();
+        boolean isReady = spotifyAppRemote != null && spotifyAppRemote.isConnected();
+        if (!isReady) {
+            Log.w(TAG, "Is not connected!");
+        }
+        return isReady;
     }
 
     public void disconnect() {

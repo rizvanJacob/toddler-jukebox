@@ -11,11 +11,11 @@ import androidx.appcompat.widget.AppCompatButton;
 
 public class SongButton extends AppCompatButton {
     private final SpotifyClient client;
-    private final String trackUrl;
+    private final String trackId;
     public SongButton(Context context, SpotifyClient client, SongItem songItem) {
         super(context);
         this.client = client;
-        this.trackUrl = parseSpotifyUrl(songItem.trackId());
+        this.trackId = songItem.trackId();
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -53,10 +53,7 @@ public class SongButton extends AppCompatButton {
             return;
         }
         Log.d("SongButton", "Song button was clicked!");
-        client.play(trackUrl);
+        client.play(trackId);
     }
 
-    private String parseSpotifyUrl(String trackId) {
-        return String.format("spotify:track:%s", trackId);
-    }
 }
