@@ -9,8 +9,11 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private Config config;
     private SpotifyClient client;
+    private NfcReader nfcReader;
+    private UiLocker uiLocker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,31 +23,25 @@ public class MainActivity extends AppCompatActivity {
                 config.clientId,
                 config.redirectUri
         );
+
+        nfcReader = new NfcReader(this, tagId -> {
+            Log.d(TAG, "NFC tag detected: " + tagId);
+            // TODO: Match tag ID to song and play
+        });
+
+        uiLocker = new UiLocker(this);
+
         onResume();
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (client != null) {
-            client.stop();
-            client.disconnect();
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent); // So getIntent() returns the new one
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        uiLocker.lock();
+        nfcReader.enable();
         Uri data = getIntent().getData();
         if (data != null) {
-            Log.d("MainActivity", "Redirected with URI: " + data.toString());
+            Log.d(TAG, "Redirected with URI: " + data.toString());
             // Optional: handle URI here if you want to extract tokens or validate
         }
         client.connect(this, ()->{}, ()->{});
@@ -55,5 +52,28 @@ public class MainActivity extends AppCompatActivity {
             var songButton = new SongButton(this, client, song);
             container.addView(songButton);
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        nfcReader.disable();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (client != null) {
+            client.stop();
+            client.disconnect();
+        }
+        uiLocker.unlock();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // So getIntent() returns the new one
+        nfcReader.handleIntent(intent);
     }
 }
