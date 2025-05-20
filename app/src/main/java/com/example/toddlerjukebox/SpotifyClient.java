@@ -49,9 +49,11 @@ public class SpotifyClient {
     }
 
     public void play(String spotifyUri) {
-        if (spotifyAppRemote != null) {
-            spotifyAppRemote.getPlayerApi().play(spotifyUri);
+        if (spotifyAppRemote == null) {
+            Log.e("SpotifyClient", "Is not connected!");
+            return;
         }
+        spotifyAppRemote.getPlayerApi().play(spotifyUri);
     }
 
     public void disconnect() {
