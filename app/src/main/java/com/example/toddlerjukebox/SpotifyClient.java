@@ -11,6 +11,7 @@ import com.spotify.protocol.types.Repeat;
 import java.util.Optional;
 
 public class SpotifyClient {
+    private static final String TAG = "SpotifyClient";
     private final String clientId, redirectUri;
     private SpotifyAppRemote spotifyAppRemote;
     private Integer previousRepeatMode = null;
@@ -19,7 +20,7 @@ public class SpotifyClient {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
 
-        Log.d("SpotifyClient", String.format("Instantiated Client %s; redirects to %s", clientId, redirectUri));
+        Log.d(TAG, String.format("Instantiated Client %s; redirects to %s", clientId, redirectUri));
     }
 
     public void connect(Context context, Runnable onConnected, Runnable onFailure) {
@@ -42,17 +43,17 @@ public class SpotifyClient {
                         spotifyAppRemote.getPlayerApi().getPlayerState()
                                 .setResultCallback(playerState -> {
                                     SpotifyClient.this.previousRepeatMode = playerState.playbackOptions.repeatMode;
-                                    Log.d("SpotifyClient", "Captured previous repeat mode: " + previousRepeatMode);
+                                    Log.d(TAG, "Captured previous repeat mode: " + previousRepeatMode);
                                     spotifyAppRemote.getPlayerApi().setRepeat(Repeat.ONE);
                                 });
-                        Log.i("SpotifyClient", "Connected!");
+                        Log.i(TAG, "Connected!");
                         Optional.ofNullable(onConnected)
                                 .ifPresent(Runnable::run);
                     }
 
                     @Override
                     public void onFailure(Throwable error) {
-                        Log.e("SpotifyClient", "Connection failed", error);
+                        Log.e(TAG, "Connection failed", error);
                         Optional.ofNullable(onFailure)
                                 .ifPresent(Runnable::run);
                     }
@@ -61,7 +62,7 @@ public class SpotifyClient {
 
     public void play(String spotifyUri) {
         if (!isReady()) {
-            Log.e("SpotifyClient", "Is not connected!");
+            Log.e(TAG, "Is not connected!");
             return;
         }
         spotifyAppRemote.getPlayerApi().play(spotifyUri);
@@ -69,7 +70,7 @@ public class SpotifyClient {
 
     public void stop(){
         if (!isReady()) {
-            Log.e("SpotifyClient", "Is not connected!");
+            Log.e(TAG, "Is not connected!");
             return;
         }
         spotifyAppRemote.getPlayerApi().pause();
