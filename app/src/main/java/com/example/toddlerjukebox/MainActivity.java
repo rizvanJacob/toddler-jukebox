@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (client != null) {
+            client.stop();
             client.disconnect();
         }
     }
