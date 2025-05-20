@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
         config = new Config();
         client = new SpotifyClient(
                 config.clientId,
-                config.clientSecret,
                 config.redirectUri
         );
         client.connect(this, ()->{}, ()->{});

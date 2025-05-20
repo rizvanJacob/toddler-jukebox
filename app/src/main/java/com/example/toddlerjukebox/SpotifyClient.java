@@ -6,14 +6,17 @@ import android.util.Log;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.types.Repeat;
+
+import java.util.Optional;
 
 public class SpotifyClient {
-    private final String clientId, clientSecret, redirectUri;
+    private final String clientId, redirectUri;
     private SpotifyAppRemote spotifyAppRemote;
+    private Integer previousRepeatMode = null;
 
-    public SpotifyClient(String clientId, String clientSecret, String redirectUri) {
+    public SpotifyClient(String clientId, String redirectUri) {
         this.clientId = clientId;
-        this.clientSecret = clientSecret;
         this.redirectUri = redirectUri;
 
         Log.d("SpotifyClient", String.format("Instantiated Client %s; redirects to %s", clientId, redirectUri));
@@ -36,28 +39,50 @@ public class SpotifyClient {
                     @Override
                     public void onConnected(SpotifyAppRemote remote) {
                         spotifyAppRemote = remote;
-                        Log.d("SpotifyClient", "Connected!");
-                        onConnected.run();
+                        spotifyAppRemote.getPlayerApi().getPlayerState()
+                                .setResultCallback(playerState -> {
+                                    SpotifyClient.this.previousRepeatMode = playerState.playbackOptions.repeatMode;
+                                    Log.d("SpotifyClient", "Captured previous repeat mode: " + previousRepeatMode);
+                                    spotifyAppRemote.getPlayerApi().setRepeat(Repeat.ONE);
+                                });
+                        Log.i("SpotifyClient", "Connected!");
+                        Optional.ofNullable(onConnected)
+                                .ifPresent(Runnable::run);
                     }
 
                     @Override
                     public void onFailure(Throwable error) {
                         Log.e("SpotifyClient", "Connection failed", error);
-                        onFailure.run();
+                        Optional.ofNullable(onFailure)
+                                .ifPresent(Runnable::run);
                     }
                 });
     }
 
     public void play(String spotifyUri) {
-        if (spotifyAppRemote == null) {
+        if (!isReady()) {
             Log.e("SpotifyClient", "Is not connected!");
             return;
         }
         spotifyAppRemote.getPlayerApi().play(spotifyUri);
     }
 
+    public void stop(){
+        if (!isReady()) {
+            Log.e("SpotifyClient", "Is not connected!");
+            return;
+        }
+        spotifyAppRemote.getPlayerApi().pause();
+    }
+
+    private boolean isReady(){
+        return spotifyAppRemote != null && spotifyAppRemote.isConnected();
+    }
+
     public void disconnect() {
         if (spotifyAppRemote != null) {
+            Optional.ofNullable(previousRepeatMode)
+                    .ifPresent(spotifyAppRemote.getPlayerApi()::setRepeat);
             SpotifyAppRemote.disconnect(spotifyAppRemote);
             spotifyAppRemote = null;
         }
