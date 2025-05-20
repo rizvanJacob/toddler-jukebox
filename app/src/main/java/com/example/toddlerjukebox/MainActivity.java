@@ -20,15 +20,9 @@ public class MainActivity extends AppCompatActivity {
                 config.clientId,
                 config.redirectUri
         );
-        client.connect(this, ()->{}, ()->{});
-        setContentView(R.layout.activity_main);
-
-        LinearLayout container = findViewById(R.id.buttonContainer);
-        config.getSongs().forEach(song -> {
-            var songButton = new SongButton(this, client, song);
-            container.addView(songButton);
-        });
+        onResume();
     }
+
 
     @Override
     protected void onStop() {
@@ -52,5 +46,13 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", "Redirected with URI: " + data.toString());
             // Optional: handle URI here if you want to extract tokens or validate
         }
+        client.connect(this, ()->{}, ()->{});
+        setContentView(R.layout.activity_main);
+
+        LinearLayout container = findViewById(R.id.buttonContainer);
+        config.getSongs().forEach(song -> {
+            var songButton = new SongButton(this, client, song);
+            container.addView(songButton);
+        });
     }
 }
