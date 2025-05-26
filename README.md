@@ -51,6 +51,7 @@ Using Spotify:
 2.  Copy the Spotify Track ID, e.g. `7kM7JiA5Ak58dj6V52onnc`
 
 Using an NFC writer (e.g. NFC Tools): 
+
 3. Tap Write → Add a record → Text
 4. Paste the Track ID, e.g. `7kM7JiA5Ak58dj6V52onnc`
 
