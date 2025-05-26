@@ -1,9 +1,7 @@
 package com.example.toddlerjukebox;
 
-import android.content.Context;
-import android.util.Log;
+import com.example.toddlerjukebox.songs.SongItem;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -8,11 +8,14 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.toddlerjukebox.songs.SongButton;
+import com.example.toddlerjukebox.songs.SongController;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private Config config;
     private SpotifyClient client;
-    private NfcReader nfcReader;
+    private SongController songController;
     private UiLocker uiLocker;
 
     @Override
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 config.redirectUri
         );
 
-        nfcReader = new NfcReader(this, client);
+        songController = new SongController(this, client);
         uiLocker = new UiLocker(this);
 
         onResume();
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         uiLocker.lock();
-        nfcReader.enable();
+        songController.enable();
         Uri data = getIntent().getData();
         if (data != null) {
             Log.d(TAG, "Redirected with URI: " + data.toString());
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        nfcReader.disable();
+        songController.disable();
     }
 
     @Override

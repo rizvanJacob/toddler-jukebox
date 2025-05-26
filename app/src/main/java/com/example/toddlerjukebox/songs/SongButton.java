@@ -1,4 +1,4 @@
-package com.example.toddlerjukebox;
+package com.example.toddlerjukebox.songs;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.widget.AppCompatButton;
+
+import com.example.toddlerjukebox.SpotifyClient;
 
 public class SongButton extends AppCompatButton {
     private final SpotifyClient client;

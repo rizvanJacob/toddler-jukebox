@@ -1,4 +1,4 @@
-package com.example.toddlerjukebox;
+package com.example.toddlerjukebox.songs;
 
 import android.app.Activity;
 import android.nfc.FormatException;
@@ -6,26 +6,26 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.MifareUltralight;
 import android.nfc.tech.Ndef;
 import android.nfc.TagLostException;
 import android.util.Log;
 
+import com.example.toddlerjukebox.SpotifyClient;
+
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class NfcReader {
+public class SongController {
     private static final String TAG = "NfcReader";
     private final Activity activity;
     private final SpotifyClient client;
     private final NfcAdapter nfcAdapter;
-    private String previousId;
-    private Instant pausedAt;
-
-    public NfcReader(Activity activity, SpotifyClient client) {
+    private final AtomicReference<String> previousId = new AtomicReference<>(null);
+    private final AtomicReference<Instant> pausedAt = new AtomicReference<>(null);
+    public SongController(Activity activity, SpotifyClient client) {
         this.activity = activity;
         this.client = client;
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(activity);
@@ -45,34 +45,22 @@ public class NfcReader {
 
     private void onRead(Tag tag) {
         Log.d(TAG, "Read tag: " + tag.toString());
-        try {
-            final var ndef = Ndef.get(tag);
+        try (Ndef ndef = Ndef.get(tag)) {
             if (ndef == null) {
                 Log.e(TAG, "Failed to read tag as NDEF");
                 return;
             }
             ndef.connect();
             final var trackId = readTrackId(ndef);
+            onTrackTagDetected(trackId);
 
-            activity.runOnUiThread(() -> onTrackTagDetected(trackId));
-            new Thread(() -> {
-                try {
-                    while (true) {
-                        Thread.sleep(1000);
-                        ndef.getNdefMessage(); // throws when tag removed
-                    }
-                } catch (TagLostException e) {
-                    Log.d(TAG, "Tag removed");
-                    activity.runOnUiThread(this::onTrackTagRemoved);
-                } catch (Exception e) {
-                    Log.e(TAG, "Unexpected NFC error", e);
-                } finally {
-                    try {
-                        ndef.close();
-                    } catch (Exception ignored) {
-                    }
-                }
-            }).start();
+            while (true) {
+                ndef.getNdefMessage();
+                Thread.sleep(500);
+            }
+        } catch (TagLostException e) {
+            Log.d(TAG, "Tag removed!");
+            onTrackTagRemoved();
         } catch (Exception e) {
             Log.e(TAG, "NFC read error", e);
         }
@@ -100,19 +88,19 @@ public class NfcReader {
     }
 
     private void onTrackTagDetected(String trackId) {
-        if (Objects.equals(trackId, previousId) &&
+        if (Objects.equals(trackId, previousId.get()) &&
                 Instant.now()
                         .minus(10, ChronoUnit.SECONDS)
-                        .isBefore(pausedAt)) {
+                        .isBefore(pausedAt.get())) {
             client.resume();
         } else {
             client.play(trackId);
         }
-        previousId = trackId;
+        previousId.set(trackId);
     }
 
     private void onTrackTagRemoved() {
-        pausedAt = Instant.now();
+        pausedAt.set(Instant.now());
         client.pause();
     }
 }
