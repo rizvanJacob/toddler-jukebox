@@ -1,0 +1,3 @@
+sdk.dir=/Users/<user>/Library/Android/sdk
+spotifyClientId=
+spotifyRedirectUri=toddlerjukebox\://callback
