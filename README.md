@@ -50,7 +50,9 @@ Using Spotify:
 1.  Find the Track ID of your desired track: - Display the sharable link to a track - Check the copied URL: `https://open.spotify.com/track/<track_id>`
 2.  Copy the Spotify Track ID, e.g. `7kM7JiA5Ak58dj6V52onnc`
 
-Using an NFC writer (e.g. NFC Tools): 3. Tap Write → Add a record → Text 4. Paste the Track ID, e.g. `7kM7JiA5Ak58dj6V52onnc`
+Using an NFC writer (e.g. NFC Tools): 
+3. Tap Write → Add a record → Text
+4. Paste the Track ID, e.g. `7kM7JiA5Ak58dj6V52onnc`
 
 > Each tag must contain only 1 NDEF Text record containing only the track ID
 
