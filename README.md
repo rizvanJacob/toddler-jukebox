@@ -19,27 +19,31 @@ Perfect for giving your toddler autonomy over music choices without having to in
 
 ## Getting Started
 
-### 1. App Installation
+1. Clone this repo and open it in **Android Studio**
 
-- Clone this repo and open it in **Android Studio**
-- Connect your Android phone (Pixel or similar NFC-enabled device)
-- Click **Run** to deploy the app
-
-> Requires Android 8.0 (API 26) or higher  
-> Spotify app must be installed and logged in
-
----
-
-### 2. Register Your Spotify App
+### 1. Register Your Spotify App
 
 Since this app is not distributed through the Play Store, you'll use your own Spotify Developer App:
 
 1. Visit [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Click **“Create an App”**
 3. Set any name/description
-4. Under **Redirect URIs**, add: `toddlerjukebox://callback`
-5. Copy your **Client ID**
-6. Past the client ID into the `local.properties` file, under the `spotifyClientId` property
+4. Check "Android" for the "Which API/SDKs are you planning to use?" question
+5. Add the following Android Package:
+  - Package name: "com.example.toddlerjukebox"
+  - Check the package SHA1 fingerprint by running `./gradlew signingReport`, e.g. "AB:CD:EF..."
+6. Under **Redirect URIs**, add: `toddlerjukebox://callback`
+7. Copy your **Client ID**
+8. Rename `local.properties.sample` to `local.properties`
+9. Paste the client ID into the `local.properties` file, under the `spotifyClientId` property
+
+### 2. App Installation
+
+1. Connect your Android phone (Pixel or similar NFC-enabled device)
+2. Click **Run** to deploy the app
+
+> Requires Android 8.0 (API 26) or higher  
+> Spotify app must be installed and logged in
 
 ### 3. Write NFC Tags
 
